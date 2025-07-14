@@ -1,229 +1,108 @@
+# Crear un archivo index.html con el contenido corregido para la malla académica
+html_content = """
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Malla Veterinaria Interactiva</title>
-<style>
-  body {
-    background: #f8e8f8;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #5a155a;
-    padding: 20px;
-  }
-  h1 {
-    text-align: center;
-    color: #9b2f9b;
-  }
-  .semestre {
-    margin-bottom: 30px;
-    border: 2px solid #c167c1;
-    border-radius: 10px;
-    padding: 15px;
-    background: #f9d9f9;
-  }
-  .semestre h2 {
-    color: #6a0a6a;
-    margin-bottom: 10px;
-  }
-  .ramo {
-    display: flex;
-    align-items: center;
-    margin-bottom: 6px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.3s ease;
-  }
-  .ramo input[type="checkbox"] {
-    margin-right: 10px;
-    transform: scale(1.3);
-    cursor: pointer;
-  }
-  /* Estados */
-  .ramo.aprobado {
-    background-color: #d8a8d8;
-    color: white;
-    font-weight: bold;
-  }
-  .ramo.habilitado {
-    background-color: #f1b9f1;
-  }
-  .ramo.bloqueado {
-    background-color: #e0c3e0;
-    color: #7d5a7d;
-    cursor: not-allowed;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malla Medicina Veterinaria</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #f8cdda, #f88fb1);
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #6a1b9a;
+        }
+        #malla {
+            display: flex;
+            flex-direction: row;
+            overflow-x: auto;
+            gap: 20px;
+        }
+        .semestre {
+            background-color: #ffffffcc;
+            border-radius: 10px;
+            padding: 15px;
+            min-width: 280px;
+            flex-shrink: 0;
+            max-height: 95vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .semestre h2 {
+            color: #ab47bc;
+            border-bottom: 2px solid #ce93d8;
+            padding-bottom: 5px;
+        }
+        label {
+            display: block;
+            margin: 8px 0;
+            cursor: pointer;
+        }
+        input[type="checkbox"] {
+            margin-right: 8px;
+        }
+    </style>
 </head>
 <body>
+    <h1>Malla Medicina Veterinaria</h1>
+    <div id="malla"></div>
 
-<h1>Malla Veterinaria Interactiva</h1>
+    <script>
+        const ramos_pdf = [...];  // Aquí va la lista de asignaturas
 
-<div id="malla"></div>
+        const mallaContainer = document.getElementById("malla");
 
-<script>
-const STORAGE_KEY = 'malla_vet_aprobados';
-
-const ramos_pdf = [
-    {"nombre": "Matemática general", "semestre": 1, "prerrequisitos": []},
-    {"nombre": "Taller de comunicación oral y escrita", "semestre": 1, "prerrequisitos": []},
-    {"nombre": "Química", "semestre": 1, "prerrequisitos": []},
-    {"nombre": "Biología celular", "semestre": 1, "prerrequisitos": []},
-    {"nombre": "Introducción a la medicina veterinaria", "semestre": 1, "prerrequisitos": []},
-
-    {"nombre": "Anatomía del canino", "semestre": 2, "prerrequisitos": []},
-    {"nombre": "Histoembriología", "semestre": 2, "prerrequisitos": []},
-    {"nombre": "Bioestadística", "semestre": 2, "prerrequisitos": ["Matemática general"]},
-    {"nombre": "Bioquímica", "semestre": 2, "prerrequisitos": ["Química"]},
-    {"nombre": "Inglés I", "semestre": 2, "prerrequisitos": []},
-
-    {"nombre": "Anatomía comparada", "semestre": 3, "prerrequisitos": ["Anatomía del canino"]},
-    {"nombre": "Práctica básica", "semestre": 3, "prerrequisitos": ["Anatomía del canino"]},
-    {"nombre": "Medio ambiente y gestión ambiental", "semestre": 3, "prerrequisitos": ["Biología celular"]},
-    {"nombre": "Zoología", "semestre": 3, "prerrequisitos": ["Histoembriología"]},
-    {"nombre": "Inglés II", "semestre": 3, "prerrequisitos": ["Inglés I"]},
-
-    {"nombre": "Enfermedades parasitarias", "semestre": 4, "prerrequisitos": ["Zoología"]},
-    {"nombre": "Genética", "semestre": 4, "prerrequisitos": ["Bioestadística"]},
-    {"nombre": "Fisiología animal", "semestre": 4, "prerrequisitos": ["Anatomía del canino", "Bioquímica"]},
-    {"nombre": "Administración y emprendimiento veterinario", "semestre": 4, "prerrequisitos": []},
-    {"nombre": "Microbiología general y veterinaria", "semestre": 4, "prerrequisitos": ["Biología celular"]},
-
-    {"nombre": "Reproducción e inseminación artificial", "semestre": 5, "prerrequisitos": ["Fisiología animal"]},
-    {"nombre": "Etología y bienestar animal", "semestre": 5, "prerrequisitos": ["Zoología"]},
-    {"nombre": "Nutrición y alimentación animal", "semestre": 5, "prerrequisitos": ["Bioquímica"]},
-    {"nombre": "Tecnología de los alimentos", "semestre": 5, "prerrequisitos": ["Microbiología general y veterinaria"]},
-    {"nombre": "Fisiopatología", "semestre": 5, "prerrequisitos": ["Fisiología animal", "Histoembriología"]},
-
-    {"nombre": "Inmunología", "semestre": 6, "prerrequisitos": ["Microbiología general y veterinaria"]},
-    {"nombre": "Producción avícola", "semestre": 6, "prerrequisitos": ["Nutrición y alimentación animal", "Etología y bienestar animal"]},
-    {"nombre": "Obstetricia y ginecología", "semestre": 6, "prerrequisitos": ["Reproducción e inseminación artificial"]},
-    {"nombre": "Farmacología y toxicología", "semestre": 6, "prerrequisitos": ["Fisiología animal"]},
-    {"nombre": "Control y calidad de los alimentos", "semestre": 6, "prerrequisitos": ["Tecnología de los alimentos", "Enfermedades parasitarias"]},
-    {"nombre": "Enfermedades infecciosas", "semestre": 6, "prerrequisitos": ["Inmunología"]},
-    {"nombre": "Patología de sistemas", "semestre": 6, "prerrequisitos": ["Fisiopatología"]},
-
-    {"nombre": "Práctica intermedia", "semestre": 7, "prerrequisitos": ["Farmacología y toxicología", "Enfermedades infecciosas"]},
-    {"nombre": "Producción de ovinos y caprinos", "semestre": 7, "prerrequisitos": ["Genética"]},
-    {"nombre": "Epidemiología veterinaria", "semestre": 7, "prerrequisitos": ["Enfermedades infecciosas"]},
-    {"nombre": "Laboratorio clínico", "semestre": 7, "prerrequisitos": ["Patología de sistemas"]},
-    {"nombre": "Semiología", "semestre": 7, "prerrequisitos": ["Farmacología y toxicología", "Fisiopatología", "Anatomía comparada"]},
-    {"nombre": "Producción porcina", "semestre": 7, "prerrequisitos": ["Reproducción e inseminación artificial", "Medio ambiente y gestión ambiental"]},
-
-    {"nombre": "Medicina de caninos", "semestre": 8, "prerrequisitos": ["Laboratorio clínico"]},
-    {"nombre": "Medicina de felinos", "semestre": 8, "prerrequisitos": ["Laboratorio clínico"]},
-    {"nombre": "Cirugía general", "semestre": 8, "prerrequisitos": []},
-    {"nombre": "Medicina de animales mayores", "semestre": 8, "prerrequisitos": ["Laboratorio clínico"]},
-    {"nombre": "Medicina de animales exóticos", "semestre": 8, "prerrequisitos": ["Laboratorio clínico"]},
-
-    {"nombre": "Diagnóstico por imágenes", "semestre": 9, "prerrequisitos": ["Patología de sistemas"]},
-    {"nombre": "Metodología de la investigación", "semestre": 9, "prerrequisitos": ["Epidemiología veterinaria"]},
-    {"nombre": "Patología quirúrgica", "semestre": 9, "prerrequisitos": ["Cirugía general"]},
-    {"nombre": "Producción de bovinos de carne y leche", "semestre": 9, "prerrequisitos": ["Obstetricia y ginecología"]},
-    {"nombre": "Formulación y evaluación de proyectos", "semestre": 9, "prerrequisitos": ["Administración y emprendimiento veterinario"]},
-    {"nombre": "Producción acuícola", "semestre": 9, "prerrequisitos": ["Nutrición y alimentación animal"]},
-    {"nombre": "Práctica final", "semestre": 9, "prerrequisitos": ["Práctica intermedia"]},
-
-    {"nombre": "Clínica de animales mayores", "semestre": 10, "prerrequisitos": ["Medicina de animales mayores", "Diagnóstico por imágenes"]},
-    {"nombre": "Farmacología aplicada", "semestre": 10, "prerrequisitos": ["Clínica de animales mayores", "Medicina de caninos"]},
-    {"nombre": "Clínica de animales menores", "semestre": 10, "prerrequisitos": ["Medicina de caninos", "Diagnóstico por imágenes"]},
-    {"nombre": "Salud pública", "semestre": 10, "prerrequisitos": ["Control y calidad de los alimentos", "Epidemiología veterinaria"]},
-    {"nombre": "Trabajo de titulación", "semestre": 10, "prerrequisitos": ["Metodología de la investigación"]}
-];
-
-let aprobados = new Set();
-
-// Cargar aprobados de localStorage
-function cargarAprobados() {
-  const guardado = localStorage.getItem(STORAGE_KEY);
-  if (guardado) {
-    try {
-      const parsed = JSON.parse(guardado);
-      if (Array.isArray(parsed)) {
-        aprobados = new Set(parsed);
-      }
-    } catch {
-      aprobados = new Set();
-    }
-  }
-}
-
-// Guardar aprobados en localStorage
-function guardarAprobados() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(aprobados)));
-}
-
-// Revisa si un ramo puede habilitarse
-function puedeHabilitar(ramo) {
-  return ramo.prerrequisitos.every(prer => aprobados.has(prer));
-}
-
-function renderMalla() {
-  const contenedor = document.getElementById('malla');
-  contenedor.innerHTML = '';
-
-  // Agrupar por semestre
-  const semestres = {};
-  for (const ramo of ramos_pdf) {
-    if (!semestres[ramo.semestre]) semestres[ramo.semestre] = [];
-    semestres[ramo.semestre].push(ramo);
-  }
-
-  Object.keys(semestres).sort((a,b) => a-b).forEach(sem => {
-    const divSem = document.createElement('div');
-    divSem.classList.add('semestre');
-    divSem.innerHTML = `<h2>Semestre ${sem}</h2>`;
-
-    semestres[sem].forEach(ramo => {
-      const divRamo = document.createElement('div');
-      divRamo.classList.add('ramo');
-
-      const aprobado = aprobados.has(ramo.nombre);
-      const habilitado = puedeHabilitar(ramo) || ramo.prerrequisitos.length === 0;
-
-      if (aprobado) {
-        divRamo.classList.add('aprobado');
-      } else if (habilitado) {
-        divRamo.classList.add('habilitado');
-      } else {
-        divRamo.classList.add('bloqueado');
-      }
-
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.disabled = !habilitado;
-      checkbox.checked = aprobado;
-      checkbox.addEventListener('change', () => {
-        if (checkbox.checked) {
-          aprobados.add(ramo.nombre);
-        } else {
-          aprobados.delete(ramo.nombre);
+        function cargarEstado(nombre) {
+            return localStorage.getItem("ramo_" + nombre) === "true";
         }
-        guardarAprobados();
-        renderMalla();
-      });
 
-      const spanNombre = document.createElement('span');
-      spanNombre.textContent = ramo.nombre;
-      if (ramo.prerrequisitos.length > 0) {
-        spanNombre.title = 'Prerrequisitos: ' + ramo.prerrequisitos.join(', ');
-      }
+        function guardarEstado(nombre, estado) {
+            localStorage.setItem("ramo_" + nombre, estado);
+        }
 
-      divRamo.appendChild(checkbox);
-      divRamo.appendChild(spanNombre);
-      divSem.appendChild(divRamo);
-    });
+        const ramosPorSemestre = {};
+        ramos_pdf.forEach(ramo => {
+            if (!ramosPorSemestre[ramo.semestre]) {
+                ramosPorSemestre[ramo.semestre] = [];
+            }
+            ramosPorSemestre[ramo.semestre].push(ramo);
+        });
 
-    contenedor.appendChild(divSem);
-  });
-}
+        Object.keys(ramosPorSemestre).sort((a, b) => a - b).forEach(semestre => {
+            const container = document.createElement("div");
+            container.className = "semestre";
+            const titulo = document.createElement("h2");
+            titulo.textContent = `Semestre ${semestre}`;
+            container.appendChild(titulo);
 
-// Al inicio, cargar y mostrar
-cargarAprobados();
-renderMalla();
-</script>
+            ramosPorSemestre[semestre].forEach(ramo => {
+                const label = document.createElement("label");
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = cargarEstado(ramo.nombre);
+                checkbox.addEventListener("change", () => {
+                    guardarEstado(ramo.nombre, checkbox.checked);
+                });
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(ramo.nombre));
+                container.appendChild(label);
+            });
 
+            mallaContainer.appendChild(container);
+        });
+    </script>
 </body>
 </html>
+"""
+
+# Guardar el archivo HTML para descarga
+file_path = "/mnt/data/index.html"
+with open(file_path, "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+file_path
